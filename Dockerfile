@@ -104,4 +104,4 @@ RUN git clone https://github.com/yahoo/CaffeOnSpark.git . --recursive \
 
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:${CAFFE_ON_SPARK}/caffe-public/distribute/lib:${CAFFE_ON_SPARK}/caffe-distri/distribute/lib
 
-WORKDIR /root/spark-1.6.0-bin-hadoop2.6/
+WORKDIR /usr/local/spark
