@@ -28,11 +28,13 @@ RUN apt-get update && apt-get install -y software-properties-common \
         maven \
         libopenblas-dev \
         libboost-all-dev \
+	zip \
 	&& apt-get install -y software-properties-common \
 	&& rm -rf /var/lib/apt/lists/*
 ENV PATH=/usr/bin:$PATH
 # Clone CaffeOnSpark, continue with CaffeOnSpark build, clean source code.
 ENV CAFFE_ON_SPARK /opt/CaffeOnSpark
+ENV SPARK_HOME /opt/spark/dist
 WORKDIR ${CAFFE_ON_SPARK}
 #COPY ./settings.xml /root/.m2/settings.xml
 RUN git clone https://github.com/yahoo/CaffeOnSpark.git . --recursive \
