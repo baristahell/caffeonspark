@@ -70,13 +70,13 @@ ENV HADOOP_COMMON_LIB_NATIVE_DIR /usr/local/hadoop/lib/native
 ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_HOME/lib"
 
 # Some of the Hadoop part extracted from "https://hub.docker.com/r/sequenceiq/hadoop-docker/~/dockerfile/"
-RUN mkdir $HADOOP_HOME/input \
-	&& cp $HADOOP_HOME/etc/hadoop/*.xml $HADOOP_HOME/input \
+RUN mkdir ${HADOOP_HOME}/input \
+	&& cp ${HADOOP_HOME}/etc/hadoop/*.xml ${HADOOP_HOME}/input \
 	&& cd /usr/local/hadoop/input
 ENV BOOTSTRAP /etc/bootstrap.sh
 
-RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh \
-	&& sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64\nexport HADOOP_HOME=/usr/local/hadoop\n:' ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh \
+	&& sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
 
 # workingaround docker.io build error
 RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh \
@@ -86,12 +86,12 @@ RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh \
 #Other ports
 EXPOSE 49707 2122
 
-# Clone CaffeOnSpark, continue with CaffeOnSpark build.
+# Clone CaffeOnSpark, continue with CaffeOnSpark build, clean source code.
 ENV CAFFE_ON_SPARK /opt/CaffeOnSpark
-WORKDIR $CAFFE_ON_SPARK
+WORKDIR ${CAFFE_ON_SPARK}
 RUN git clone https://github.com/yahoo/CaffeOnSpark.git . --recursive \
 	&& cp ${CAFFE_ON_SPARK}/scripts/*.xml  ${HADOOP_HOME}/etc/hadoop # Copy .xml files. \
-	&& cd $CAFFE_ON_SPARK \
+	&& cd ${CAFFE_ON_SPARK} \
 	&& cp caffe-public/Makefile.config.example caffe-public/Makefile.config \
 	&& echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> caffe-public/Makefile.config \
 	&& sed -i "s/# CPU_ONLY := 1/CPU_ONLY := 1/g" caffe-public/Makefile.config \
@@ -100,8 +100,8 @@ RUN git clone https://github.com/yahoo/CaffeOnSpark.git . --recursive \
 	&& sed -i "s|BLAS := atlas|BLAS := open|g" caffe-public/Makefile.config \
 	&& sed -i "s|TEST_GPUID := 0|# TEST_GPUID := 0|g" caffe-public/Makefile.config \
 	&& make build \
-	&& rm ${CAFFE_ON_SPARK}/*/src && rm ${CAFFE_ON_SPARK}/data && rm ${CAFFE_ON_SPARK}/
+	&& rm -rf ${CAFFE_ON_SPARK}/*/src && rm -rf ${CAFFE_ON_SPARK}/data
 
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$CAFFE_ON_SPARK/caffe-public/distribute/lib:$CAFFE_ON_SPARK/caffe-distri/distribute/lib
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:${CAFFE_ON_SPARK}/caffe-public/distribute/lib:${CAFFE_ON_SPARK}/caffe-distri/distribute/lib
 
 WORKDIR /root/spark-1.6.0-bin-hadoop2.6/
