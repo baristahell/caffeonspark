@@ -86,23 +86,22 @@ RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh \
 #Other ports
 EXPOSE 49707 2122
 
-# Clone CaffeOnSpark
+# Clone CaffeOnSpark, continue with CaffeOnSpark build.
 ENV CAFFE_ON_SPARK /opt/CaffeOnSpark
 WORKDIR $CAFFE_ON_SPARK
 RUN git clone https://github.com/yahoo/CaffeOnSpark.git . --recursive \
-	&& cp ${CAFFE_ON_SPARK}/scripts/*.xml  ${HADOOP_HOME}/etc/hadoop # Copy .xml files.
-
-# Continue with CaffeOnSpark build.
-WORKDIR $CAFFE_ON_SPARK
-RUN cp caffe-public/Makefile.config.example caffe-public/Makefile.config \
+	&& cp ${CAFFE_ON_SPARK}/scripts/*.xml  ${HADOOP_HOME}/etc/hadoop # Copy .xml files. \
+	&& cd $CAFFE_ON_SPARK \
+	&& cp caffe-public/Makefile.config.example caffe-public/Makefile.config \
 	&& echo "INCLUDE_DIRS += ${JAVA_HOME}/include" >> caffe-public/Makefile.config \
 	&& sed -i "s/# CPU_ONLY := 1/CPU_ONLY := 1/g" caffe-public/Makefile.config \
 	&& sed -i "s|CUDA_DIR := /usr/local/cuda|# CUDA_DIR := /usr/local/cuda|g" caffe-public/Makefile.config \
 	&& sed -i "s|CUDA_ARCH :=|# CUDA_ARCH :=|g" caffe-public/Makefile.config \
 	&& sed -i "s|BLAS := atlas|BLAS := open|g" caffe-public/Makefile.config \
 	&& sed -i "s|TEST_GPUID := 0|# TEST_GPUID := 0|g" caffe-public/Makefile.config \
-	&& make build
+	&& make build \
+	&& rm ${CAFFE_ON_SPARK}/*/src && rm ${CAFFE_ON_SPARK}/data && rm ${CAFFE_ON_SPARK}/
 
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$CAFFE_ON_SPARK/caffe-public/distribute/lib:$CAFFE_ON_SPARK/caffe-distri/distribute/lib
 
-WORKDIR /root
+WORKDIR /root/spark-1.6.0-bin-hadoop2.6/
