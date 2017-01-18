@@ -7,6 +7,7 @@ Runs on Spark cluster.
 
 Spark job submission example :
 
+`
 spark-submit --master ${MASTER_URL} \
 --files ${PATH/TO/SOLVER.prototxt}, ${PATH/TO/NET.prototxt} \
 --conf spark.cores.max=${TOTAL_CORES} \
@@ -23,3 +24,4 @@ ${CAFFE_ON_SPARK}/caffe-grid/target/caffe-grid-0.1-SNAPSHOT-jar-with-dependencie
 -connection ethernet \
 -model file:${PATH/TO/MODEL.model} \
 -output file:${PATH/TO/FEATURES_RESULTS}
+`
