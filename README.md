@@ -14,7 +14,7 @@ spark-submit --master ${MASTER_URL}
 --conf spark.task.cpus=${CORES_PER_WORKER}
 --conf spark.driver.extraLibraryPath="${LD_LIBRARY_PATH}"
 --conf spark.executorEnv.LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
---class com.yahoo.ml.caffe.CaffeOnSpark \
+--class com.yahoo.ml.caffe.CaffeOnSpark
 ${CAFFE_ON_SPARK}/caffe-grid/target/caffe-grid-0.1-SNAPSHOT-jar-with-dependencies.jar
 -train
 -features accuracy,loss -label label
